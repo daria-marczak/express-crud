@@ -8,25 +8,21 @@ var FileSync = require("lowdb/adapters/FileSync");
 
 var adapter = new FileSync("test.json");
 var db = low(adapter);
-
-var stringifyFile;
-
-var file = {};
+db.defaults({notes: []})
+  .write();
 
 app.use(bodyParser.json()); 
 
 app.get("/getNote", function(req, res) {
   fs.readFile("./test.json", "utf-8", function(err, data) {
     if (err) throw err;
-    stringifyFile = data
     res.send(data);
   });
 });
 
 app.post("/updateNote/:value", function(req, res) {
   value = req.params.value;
-  db.defaults({notes: []}).write()
-    .get("notes")
+  db.get("notes")
     .push(value)
     .write();
   // fs.writeFile("./test.json", stringifyFile, function(err) {
@@ -34,6 +30,7 @@ app.post("/updateNote/:value", function(req, res) {
   //   console.log("File updated");
   //   res.send();
   // });
+  res.end();
 });
 
 app.use(function(req, res, next) {
